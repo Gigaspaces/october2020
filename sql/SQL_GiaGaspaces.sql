@@ -127,7 +127,8 @@ WHERE  btz.region = ?
        AND btz.id_bb_global = badj.id_bb_global 
 
 -- 7) TODO
--- Challenges: TBD
+-- Challenges: 3 levels (select from select from select) mixed with join.
+-- all queries and joins are on same table, so looks like its collocated if ticker is routing
 SELECT m.ticker, 
        m.last_price 
 FROM   (SELECT x.ticker, 
