@@ -16,7 +16,8 @@ BLOOMBERG_FUTURES.SHARE_FUTURES_PRICING
 -- Formatted via http://www.dpriver.com/pp/sqlformat.htm
 ---------------------------------------------------------------------------------------
 
--- 1) 
+-- 1) Simple select on a single table.
+-- Challenges: none.
 SELECT region, 
        id_bb_parsekey, 
        exch_code, 
@@ -33,7 +34,8 @@ FROM   bloomberg.bloomberg_tzero_out
 WHERE  region = ? 
        AND ddate = ? 
 
--- 2) 
+-- 2) select with subquery on same table
+-- Challenges: collocated subquery of table is ref or ticker col is routing. Otherwise requires shuffling.
 SELECT ticker, 
        last_price, 
        dbtimestamp 
@@ -45,7 +47,8 @@ WHERE  ticker LIKE '%Curncy%'
                                              AND last_price IS NOT NULL) 
 ORDER  BY data_received_timestamp DESC; 
 
--- 3) 
+-- 3) Simple select on a single table.
+-- Challenges: none.
 SELECT country, 
        crncy, 
        id_bb_global, 
@@ -65,7 +68,8 @@ WHERE  region = ?
        AND called_bool = 'N' 
        AND exch_code <> 'NOT LISTED' 
 
--- 4) 
+-- 4) TODO
+-- Challenges: TBD
 SELECT * 
 FROM   (SELECT Replace(x.ticker, ' ELEC ', ' ') AS TICKER, 
                Max(crncy)                       AS CRNCY, 
@@ -94,7 +98,8 @@ FROM   (SELECT Replace(x.ticker, ' ELEC ', ' ') AS TICKER,
                  AND crncy IS NOT NULL 
 ORDER  BY data_received_timestamp; 
 
--- 5) 
+-- 5) TODO
+-- Challenges: TBD
 SELECT Replace(x.parsekyable_des_source, ' ELEC ', ' ') AS TICKER, 
        Max(px_yest_close)                               AS PX_YEST_CLOSE, 
        Max(x.dbtimestamp)                               AS DBTIMESTAMP 
@@ -110,7 +115,8 @@ FROM   bloomberg_futures.share_futures_pricing_rpx AS x
 WHERE  px_yest_close IS NOT NULL 
 GROUP  BY Replace(x.parsekyable_des_source, ' ELEC ', ' ') 
 
--- 6) 
+-- 6) Select on 2 tables, effectively inner join withot join syntax
+-- Challenges: inner join. 
 SELECT btz.flex_id, 
        badj.close_px_adj 
 FROM   bloomberg.bloomberg_tzero_out btz, 
@@ -120,7 +126,8 @@ WHERE  btz.region = ?
        AND btz.ddate = badj.open_date 
        AND btz.id_bb_global = badj.id_bb_global 
 
--- 7) 
+-- 7) TODO
+-- Challenges: TBD
 SELECT m.ticker, 
        m.last_price 
 FROM   (SELECT x.ticker, 
