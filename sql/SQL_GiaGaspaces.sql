@@ -99,7 +99,8 @@ FROM   (SELECT Replace(x.ticker, ' ELEC ', ' ') AS TICKER,
 ORDER  BY data_received_timestamp; 
 
 -- 5) TODO
--- Challenges: TBD
+-- Challenges: select with inner join on subquery on same table
+-- collocated if table (share_futures_pricing_rpx) is ref or join column (share_futures_pricing_rpx.parsekyable_des_source) is routing
 SELECT Replace(x.parsekyable_des_source, ' ELEC ', ' ') AS TICKER, 
        Max(px_yest_close)                               AS PX_YEST_CLOSE, 
        Max(x.dbtimestamp)                               AS DBTIMESTAMP 
