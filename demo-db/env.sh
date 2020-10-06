@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+. `dirname $0`/../env.sh
+. ${GS_HOME}/bin/setenv.sh
+
+export DB_NAME=demo-db
+export GS_DB_CLI="${JAVACMD} -cp ${GS_HOME}/tools/cli/*:${GS_HOME}/lib/required/*:${GS_HOME}/lib/optional/jdbc/* com.gigaspaces.cli.commands.db.DbCommand"
