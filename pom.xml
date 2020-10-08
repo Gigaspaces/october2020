@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <gs.version>15.5.1</gs.version>
+        <gs.version>15.8.0-SNAPSHOT</gs.version>
         <hibernate.version>5.3.10.Final</hibernate.version>
         <db.driver.groupId>org.hsqldb</db.driver.groupId>
         <db.driver.artifactId>hsqldb</db.driver.artifactId>

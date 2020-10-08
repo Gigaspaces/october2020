@@ -68,7 +68,7 @@ public class CustomSpaceConfig extends EmbeddedSpaceBeansConfig {
 
 	private SessionFactory initSessionFactory() {
 		return new LocalSessionFactoryBuilder(initDataSource())
-				.scanPackages("com.olympus.model")
+				.scanPackages("barra")
 				.setProperty("hibernate.dialect", hibernateDialect)
 				.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.NoCacheProvider")
 				.setProperty("hibernate.jdbc.use_scrollable_resultset", "true")

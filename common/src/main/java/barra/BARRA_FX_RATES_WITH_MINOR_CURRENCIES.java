@@ -1,10 +1,11 @@
-package com.olympus.model;
+package barra;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 import com.gigaspaces.annotation.pojo.SpaceIndex;
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 import com.gigaspaces.metadata.index.SpaceIndexType;
+import com.olympus.model.RefTable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BARRA_FX_RATES_WITH_MINOR_CURRENCIES")
 @SpaceClass
-public class BARRA_FX_RATES_WITH_MINOR_CURRENCIES implements RefTable{
+public class BARRA_FX_RATES_WITH_MINOR_CURRENCIES implements RefTable {
     private String id;
     private long DDATE;
     private String CURRENCY_CODE;
