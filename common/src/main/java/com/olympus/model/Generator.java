@@ -18,8 +18,12 @@ import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.SpaceProxyConfigurer;
 
 public class Generator {
-    private static final int SIZE = 100000;
-    private static Random rand = new Random(System.currentTimeMillis());
+    private static final int SIZE = 100;
+    private static final Random rand = new Random(System.currentTimeMillis());
+    private static final long startDate = 20200101;
+    private static final long endDate = 20200601;
+    private static final BigDecimal delta = new BigDecimal(0.001);
+
     public static void main(String[] args) {
         String table = args[0];
         GigaSpace gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer("demo").lookupGroups("xap-15.5.1")).create();
@@ -27,63 +31,80 @@ public class Generator {
 
         try {
             if(table.equals("FX_RATES"))
-                gen.generateFxRates(gigaSpace);
-            if(table.equals("FUTURES"))
-                gen.generateFutures(gigaSpace);
+                gen.writeBARRA_FX_RATES_WITH_MINOR_CURRENCIES(gigaSpace);
+            if(table.equals("FUTURES")) {
+                gen.writeREAL_TIME_FUTURES(gigaSpace);
+                gen.writeREAL_TIME(gigaSpace);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void generateFxRates(GigaSpace gs) throws IOException {
+    public void writeBARRA_FX_RATES_WITH_MINOR_CURRENCIES(GigaSpace gs) throws IOException {
         String[] codes = loadFXCodes();
-        long startDate = 20200101;
-        long endDate = 20200111;
-//        long endDate = 20200601;
+        for (String fxCode: codes) {
+            gs.writeMultiple(generateBARRA_FX_RATES_WITH_MINOR_CURRENCIES(fxCode));
+        }
+    }
+
+    public void writeREAL_TIME_FUTURES(GigaSpace gs) throws IOException {
+        String[] codes = loadFXCodes();
+        for (String fxCode: codes) {
+            gs.writeMultiple(generateREAL_TIME_FUTURES(fxCode));
+        }
+    }
+
+    public void writeREAL_TIME(GigaSpace gs) throws IOException {
+        String[] codes = loadFXCodes();
+        for (String fxCode: codes) {
+            gs.writeMultiple(generateREAL_TIME(fxCode));
+        }
+    }
+
+    private BARRA_FX_RATES_WITH_MINOR_CURRENCIES[] generateBARRA_FX_RATES_WITH_MINOR_CURRENCIES(String fxCode){
         BARRA_FX_RATES_WITH_MINOR_CURRENCIES[] entries = new BARRA_FX_RATES_WITH_MINOR_CURRENCIES[Long.valueOf(endDate - startDate).intValue()];
-        for (String fxCode: codes) {
-            for (long i = 0; i < endDate - startDate; i++) {
-                BARRA_FX_RATES_WITH_MINOR_CURRENCIES one = new BARRA_FX_RATES_WITH_MINOR_CURRENCIES();
-                one.setCURRENCY_CODE(fxCode);
-                one.setDDATE(startDate + i);
-                one.setFX_RATE(rand.nextDouble());
-                one.setRF_RATE(rand.nextDouble());
-                one.setRouting(Long.valueOf(i).intValue());
-                entries[Long.valueOf(i).intValue()] = one;
-            }
-            gs.writeMultiple(entries);
+        for (long i = 0; i < endDate - startDate; i++) {
+            BARRA_FX_RATES_WITH_MINOR_CURRENCIES one = new BARRA_FX_RATES_WITH_MINOR_CURRENCIES();
+            one.setCURRENCY_CODE(fxCode);
+            one.setDDATE(startDate + i);
+            one.setFX_RATE(rand.nextDouble());
+            one.setRF_RATE(rand.nextDouble());
+            one.setRouting(Long.valueOf(i).intValue());
+            entries[Long.valueOf(i).intValue()] = one;
         }
+        return entries;
     }
 
-    private void generateFutures(GigaSpace gs) throws IOException {
-        String[] codes = loadFXCodes();
-
+    private REAL_TIME_FUTURES[] generateREAL_TIME_FUTURES(String fxCode){
         REAL_TIME_FUTURES[] realTimeFutures = new REAL_TIME_FUTURES[SIZE];
-        REAL_TIME[] realTimes = new REAL_TIME[SIZE];
-        BigDecimal delta = new BigDecimal(0.001);
-        for (String fxCode: codes) {
-            for (int i = 0; i < SIZE; i++){
-                REAL_TIME_FUTURES rtf = new REAL_TIME_FUTURES();
-                long timestamp = System.currentTimeMillis() - Math.abs(rand.nextInt());
-                initEntry(rtf, fxCode, timestamp);
-                rtf.setLAST_PRICE_TIME_TODAY_REALTIME(timestamp - rand.nextInt(10000));
-                rtf.setLAST_TRADE_PRICE_TIME_TODAY_RT(rtf.getLAST_PRICE_TIME_TODAY_REALTIME() - rand.nextInt(100));
-                rtf.setASK(rtf.getLAST_PRICE().add(delta));
-                rtf.setBID(rtf.getLAST_PRICE().subtract(delta));
-                rtf.setVOLUME_TDY(rtf.getVOLUME().longValue());
-                realTimeFutures[i] = rtf;
-                REAL_TIME rt = new REAL_TIME();
-                initEntry(rt, fxCode, timestamp);
-                rt.setDB_TIMESTAMP(timestamp);
-                rt.setSIZE_LAST_TRADE(rt.getVOLUME().longValue());
-                rt.setPX_YEST_CLOSE(rt.getLAST_PRICE());
-                rt.setPX_YEST_DT(timestamp - 3600*12);
-                realTimes[i] = rt;
-            }
-            gs.writeMultiple(realTimeFutures);
-            gs.writeMultiple(realTimes);
+        for (int i = 0; i < SIZE; i++){
+            REAL_TIME_FUTURES rtf = new REAL_TIME_FUTURES();
+            long timestamp = System.currentTimeMillis() - Math.abs(rand.nextInt());
+            initEntry(rtf, fxCode, timestamp);
+            rtf.setLAST_TRADE_PRICE_TIME_TODAY_RT(rtf.getLAST_PRICE_TIME_TODAY_REALTIME() - rand.nextInt(100));
+            rtf.setASK(rtf.getLAST_PRICE().add(delta));
+            rtf.setBID(rtf.getLAST_PRICE().subtract(delta));
+            rtf.setVOLUME(rtf.getVOLUME_TDY());
+            realTimeFutures[i] = rtf;
         }
+
+        return realTimeFutures;
     }
+
+    private REAL_TIME[] generateREAL_TIME(String fxCode){
+        REAL_TIME[] realTimes = new REAL_TIME[SIZE];
+        for (int i = 0; i < SIZE; i++){
+            long timestamp = System.currentTimeMillis() - Math.abs(rand.nextInt());
+            REAL_TIME rt = new REAL_TIME();
+            initEntry(rt, fxCode, timestamp);
+            rt.setPX_YEST_CLOSE(rt.getLAST_PRICE());
+            realTimes[i] = rt;
+        }
+
+        return realTimes;
+    }
+
 
     private void initEntry(PartitionedTable partitionedTable, String fxCode, long timestamp){
         Date d = new Date(timestamp);
@@ -91,16 +112,18 @@ public class Generator {
         partitionedTable.setCRNCY(fxCode);
         partitionedTable.setDATA_DATE(date);
         partitionedTable.setDATA_RECEIVED_TIMESTAMP(timestamp);
+        partitionedTable.setDBTIMESTAMP(timestamp);
         partitionedTable.setPX_YEST_DT(date -1);
         partitionedTable.setTICKER(fxCode + " elec " + date);
         partitionedTable.setLAST_PRICE(new BigDecimal(rand.nextDouble()));
+        partitionedTable.setLAST_PRICE_TIME_TODAY_REALTIME(timestamp - rand.nextInt(10000));
         BigDecimal vol = new BigDecimal(Math.abs(rand.nextLong()));
         partitionedTable.set_5_DAY_AVERAGE_VOLUME_AT_TIME_RT(vol);
         partitionedTable.set_20_DAY_AVERAGE_VOLUME_AT_TIME_RT(vol.multiply(new BigDecimal(4)));
         partitionedTable.set_30_DAY_AVERAGE_VOLUME_AT_TIME_RT(vol.multiply(new BigDecimal(6)));
-        partitionedTable.setTRADING_DT_REALTIME(partitionedTable.getDATA_DATE() - rand.nextInt(1));
-        partitionedTable.setVOLUME(new BigDecimal(Math.abs(rand.nextInt())));
-
+        partitionedTable.setTRADING_DT_REALTIME(date - rand.nextInt(1));
+        partitionedTable.setVOLUME_TDY(vol);
+        partitionedTable.setSIZE_LAST_TRADE(vol);
     }
 
     private String[] loadFXCodes() throws IOException {
