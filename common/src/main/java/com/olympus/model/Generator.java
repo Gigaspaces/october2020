@@ -4,7 +4,6 @@ import barra.BARRA_FX_RATES_WITH_MINOR_CURRENCIES;
 import bpipe_rt.PartitionedTable;
 import bpipe_rt.REAL_TIME;
 import bpipe_rt.REAL_TIME_FUTURES;
-import mishel.FRUITS;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.SpaceProxyConfigurer;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,10 +66,6 @@ public class Generator {
         }
     }
 
-    public void writeFRUITS(GigaSpace gs) {
-            gs.writeMultiple(generateFRUITS());
-    }
-
     private BARRA_FX_RATES_WITH_MINOR_CURRENCIES[] generateBARRA_FX_RATES_WITH_MINOR_CURRENCIES(String fxCode){
         BARRA_FX_RATES_WITH_MINOR_CURRENCIES[] entries = new BARRA_FX_RATES_WITH_MINOR_CURRENCIES[Long.valueOf(endDate - startDate).intValue()];
         for (long i = 0; i < endDate - startDate; i++) {
@@ -115,19 +109,6 @@ public class Generator {
         return realTimes;
     }
 
-    private FRUITS[] generateFRUITS() {
-        FRUITS[] fruits = new FRUITS[SIZE];
-        for (int i = 0; i < SIZE; i++) {
-            FRUITS fruit = new FRUITS();
-            fruit.setId(getRandomFruitId());
-            fruit.setPrice(rand.nextInt(30));
-            fruit.setRouting(rand.nextInt(30));
-            fruit.setBIG_INT(new BigInteger(10, new Random()));
-            fruits[i] = fruit;
-            System.out.println(fruit.getId() + ", " + fruit.getPrice() + ", " + fruit.getEXP_DAYS());
-        }
-        return fruits;
-    }
 
     private String getRandomFruitId() {
         String[] fruitNames = new String[]{
