@@ -1,13 +1,14 @@
 package bpipe_rt;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 public interface PartitionedTable {
     String getId();
     void setId(String id);
 
-    long getDATA_DATE();
-    void setDATA_DATE(long DATA_DATE);
+    Date getDATA_DATE();
+    void setDATA_DATE(Date DATA_DATE);
 
     long getDATA_RECEIVED_TIMESTAMP();
     void setDATA_RECEIVED_TIMESTAMP(long DATA_RECEIVED_TIMESTAMP);

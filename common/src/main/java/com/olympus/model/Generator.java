@@ -134,7 +134,7 @@ public class Generator {
         Date d = new Date(timestamp);
         long date = d.getYear() + d.getMonth()*10000 + d.getDay() * 1000000;
         partitionedTable.setCRNCY(fxCode);
-        partitionedTable.setDATA_DATE(date);
+        partitionedTable.setDATA_DATE(new Date(d.getYear()-1900, d.getMonth(), d.getDay()));
         partitionedTable.setDATA_RECEIVED_TIMESTAMP(timestamp);
         partitionedTable.setDBTIMESTAMP(timestamp);
         partitionedTable.setPX_YEST_DT(date -1);

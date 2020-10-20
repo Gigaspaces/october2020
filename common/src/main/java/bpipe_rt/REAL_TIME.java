@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.sql.Date;
 
 
 @Entity
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 @SpaceClass
 public class REAL_TIME implements PartitionedTable {
     private String id;
-    private long DATA_DATE;
+    private Date DATA_DATE;
     private long DATA_RECEIVED_TIMESTAMP;
     private String TICKER;
     private BigDecimal LAST_PRICE;
@@ -53,12 +54,12 @@ public class REAL_TIME implements PartitionedTable {
 
     @Column(name = "DATA_DATE")
     @Override
-    public long getDATA_DATE() {
+    public Date getDATA_DATE() {
         return DATA_DATE;
     }
 
     @Override
-    public void setDATA_DATE(long DATA_DATE) {
+    public void setDATA_DATE(Date DATA_DATE) {
         this.DATA_DATE = DATA_DATE;
     }
 
