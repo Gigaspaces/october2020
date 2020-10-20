@@ -42,6 +42,12 @@ public class Generator {
         }
     }
 
+    public void feed(GigaSpace gigaSpace) throws IOException {
+        writeBARRA_FX_RATES_WITH_MINOR_CURRENCIES(gigaSpace);
+        writeREAL_TIME(gigaSpace);
+        writeREAL_TIME_FUTURES(gigaSpace);
+    }
+
     public void writeBARRA_FX_RATES_WITH_MINOR_CURRENCIES(GigaSpace gs) throws IOException {
         String[] codes = loadFXCodes();
         for (String fxCode: codes) {
