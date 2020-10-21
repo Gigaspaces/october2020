@@ -2,6 +2,7 @@ package com.olympus.model;
 
 import barra.BARRA_FX_RATES_WITH_MINOR_CURRENCIES;
 import bloomberg.BLOOMBERG_TZERO_OUT;
+import bloomberg_futures.SHARE_FUTURES_PRICING_RPX;
 import bpipe_rt.PartitionedTable;
 import bpipe_rt.REAL_TIME;
 import bpipe_rt.REAL_TIME_FUTURES;
@@ -75,6 +76,11 @@ public class Generator {
 
     public void writeBLOOMBERG_TZERO_OUT(GigaSpace gigaSpace) {
         BLOOMBERG_TZERO_OUT[] objects = TablesCreator.BLOOMBERG_TZERO_OUT_TABLE.generate(SIZE);
+        gigaSpace.writeMultiple(objects);
+    }
+
+    public void writeSHARE_FUTURES_PRICING_RPX(GigaSpace gigaSpace) {
+        SHARE_FUTURES_PRICING_RPX[] objects = TablesCreator.SHARE_FUTURES_PRICING_RPX_TABLE.generate(SIZE);
         gigaSpace.writeMultiple(objects);
     }
 
