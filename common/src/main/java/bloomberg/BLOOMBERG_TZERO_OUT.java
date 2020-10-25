@@ -2,8 +2,6 @@ package bloomberg;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
-import com.gigaspaces.annotation.pojo.SpaceIndex;
-import com.gigaspaces.metadata.index.SpaceIndexType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,11 +49,10 @@ public class BLOOMBERG_TZERO_OUT {
     }
 
     @Id
-    @SpaceId
-    @SpaceIndex(unique = true)
+    @SpaceId(autoGenerate = true)
     @Column(name = "Id")
     public String getId() {
-        return getDDATE().toString() + BLOOMBERG_TZERO_OUT.class.getName().hashCode();
+        return id;
     }
     public void setId(String id) {
         this.id = id;
@@ -70,7 +67,6 @@ public class BLOOMBERG_TZERO_OUT {
         this.DDATE = DDATE;
     }
 
-    @SpaceIndex(type = SpaceIndexType.EQUAL)
     @Column(name = "REGION")
     public String getREGION() {
         return REGION;
