@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -115,7 +116,7 @@ public class Generator {
         for (int i = 0; i < SIZE; i++){
             REAL_TIME_FUTURES rtf = new REAL_TIME_FUTURES();
             long timestamp = System.currentTimeMillis() - Math.abs(rand.nextInt());
-            initEntry(rtf, fxCode, timestamp);
+            initEntry(rtf, fxCode, timestamp, i);
             rtf.setLAST_TRADE_PRICE_TIME_TODAY_RT(rtf.getLAST_PRICE_TIME_TODAY_REALTIME() - rand.nextInt(100));
             rtf.setASK(rtf.getLAST_PRICE().add(delta));
             rtf.setBID(rtf.getLAST_PRICE().subtract(delta));
@@ -131,7 +132,7 @@ public class Generator {
         for (int i = 0; i < SIZE; i++){
             long timestamp = System.currentTimeMillis() - Math.abs(rand.nextInt());
             REAL_TIME rt = new REAL_TIME();
-            initEntry(rt, fxCode, timestamp);
+            initEntry(rt, fxCode, timestamp, i);
             rt.setPX_YEST_CLOSE(rt.getLAST_PRICE());
             realTimes[i] = rt;
         }
@@ -160,11 +161,13 @@ public class Generator {
     }
 
 
-    private void initEntry(PartitionedTable partitionedTable, String fxCode, long timestamp){
+    private void initEntry(PartitionedTable partitionedTable, String fxCode, long timestamp, int i){
         Date d = new Date(timestamp);
+        LocalDateTime localDateTime = LocalDateTime.now();
         long date = d.getYear() + d.getMonth()*10000 + d.getDay() * 1000000;
+        final Date sqlDate = Date.valueOf(localDateTime.toLocalDate().minusDays(i % 20));
         partitionedTable.setCRNCY(fxCode);
-        partitionedTable.setDATA_DATE(new Date(d.getYear()-1900, d.getMonth(), d.getDay()));
+        partitionedTable.setDATA_DATE(sqlDate);
         partitionedTable.setDATA_RECEIVED_TIMESTAMP(timestamp);
         partitionedTable.setDBTIMESTAMP(timestamp);
         partitionedTable.setPX_YEST_DT(date -1);
