@@ -59,7 +59,7 @@ public class CustomMirrorConfig extends EmbeddedSpaceBeansConfig {
 	
 	private SessionFactory initSessionFactory() {
 		return new LocalSessionFactoryBuilder(initDataSource())
-		    .scanPackages("com/gigaspaces/test/database/jdbc/poc_queries/generator/model/barra")
+		    .scanPackages("com/gigaspaces/test/database/jdbc/aquarious_poc/generator/model/barra")
 			.setProperty("hibernate.dialect", hibernateDialect)
 			.setProperty("hibernate.cache.provider_class", "org.hibernate.cache.NoCacheProvider")
 			.setProperty("hibernate.jdbc.use_scrollable_resultset", "true")
